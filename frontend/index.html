@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Todo App</title>
+    <link rel="stylesheet" href="libs/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="components.css">
+    <script src="libs/js/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Error and Success Notifications -->
+        <div v-if="error" class="notification error-notification">
+            <span>{{ error }}</span>
+            <button @click="error = ''" class="close-btn">&times;</button>
+        </div>
+        
+        <div v-if="success" class="notification success-notification">
+            <span>{{ success }}</span>
+            <button @click="success = ''" class="close-btn">&times;</button>
+        </div>
+        
+        <!-- Loading Overlay -->
+        <div v-if="loading" class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <p>Loading...</p>
+        </div>
+        
+        <!-- Main App Layout -->
+        <sidebar-component></sidebar-component>
+        
+        <main class="main-content" :class="{ 'sidebar-open': store.state.sidebarOpen }">
+            <header-component></header-component>
+            
+            <div class="content-container">
+                <add-todo-component></add-todo-component>
+                <todo-list-component></todo-list-component>
+            </div>
+        </main>
+        
+        <!-- Modals -->
+        <modals-component></modals-component>
+    </div>
+
+    <!-- Scripts -->
+    <script src="utils/helpers.js"></script>
+    <script src="services/api.js"></script>
+    <script src="store/todoStore.js"></script>
+    <!-- Load all components before app.js -->
+    <script src="components/Notification.js"></script>
+    <script src="components/Header.js"></script>
+    <script src="components/Sidebar.js"></script>
+    <script src="components/AddTodo.js"></script>
+    <script src="components/TodoItem.js"></script>
+    <script src="components/TodoList.js"></script>
+    <script src="components/Modals.js"></script>
+    <!-- Load app.js last to register components -->
+    <script src="app.js"></script>
+</body>
+</html>
