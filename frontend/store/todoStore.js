@@ -29,6 +29,7 @@ class TodoStore {
             // Todo creation
             newTodoText: '',
             showAdvancedForm: false,
+            duplicateWarning: '',
             newTodo: {
                 priority: 'medium',
                 category_id: '',
@@ -179,6 +180,12 @@ class TodoStore {
     async createTodo(todoData) {
         try {
             this.state.loading = true;
+            
+            // Check for duplicate todo
+            if (this.isDuplicateTodo(todoData.text)) {
+                this.showError('A todo with this text already exists!');
+                return null;
+            }
             
             // Add tags from the tags input
             if (this.state.newTodoTags) {
@@ -371,6 +378,7 @@ class TodoStore {
     resetNewTodo() {
         this.state.newTodoText = '';
         this.state.newTodoTags = '';
+        this.state.duplicateWarning = '';
         this.state.newTodo = {
             priority: 'medium',
             category_id: '',
@@ -483,6 +491,24 @@ class TodoStore {
     showError(message) {
         this.state.error = message;
         setTimeout(() => this.state.error = '', 5000);
+    }
+
+    // Check if a todo with the same text already exists
+    isDuplicateTodo(text) {
+        if (!text || !text.trim()) return false;
+        const trimmedText = text.trim().toLowerCase();
+        return this.state.todos.some(todo => 
+            todo.text.toLowerCase() === trimmedText
+        );
+    }
+
+    // Check for duplicate and set warning
+    checkDuplicateWarning(text) {
+        if (this.isDuplicateTodo(text)) {
+            this.state.duplicateWarning = 'A todo with this text already exists!';
+        } else {
+            this.state.duplicateWarning = '';
+        }
     }
 }
 

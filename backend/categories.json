@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Work",
+    "color": "#3498db",
+    "icon": "\ud83d\udcbc"
+  },
+  {
+    "id": 2,
+    "name": "Personal",
+    "color": "#e74c3c",
+    "icon": "\ud83c\udfe0"
+  },
+  {
+    "id": 3,
+    "name": "Shopping",
+    "color": "#f39c12",
+    "icon": "\ud83d\uded2"
+  },
+  {
+    "id": 4,
+    "name": "Health",
+    "color": "#27ae60",
+    "icon": "\ud83c\udfe5"
+  }
+]

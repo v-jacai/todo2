@@ -8,15 +8,17 @@ const AddTodoComponent = {
                     <input 
                         type="text"
                         v-model="store.state.newTodoText"
-                        @keyup.enter="addQuickTodo"
+                        @keyup.enter="handleEnterKey"
+                        @input="checkForDuplicate"
                         placeholder="Add a new todo..."
-                        class="todo-input"
+                        class="quick-input"
+                        :class="{ 'has-warning': store.state.duplicateWarning }"
                         :disabled="store.state.loading"
                     >
                     <button 
                         @click="addQuickTodo" 
                         class="add-btn"
-                        :disabled="!store.state.newTodoText.trim() || store.state.loading"
+                        :disabled="!store.state.newTodoText.trim() || store.state.loading || !!store.state.duplicateWarning"
                     >
                         <i class="fas fa-plus"></i>
                     </button>
@@ -27,6 +29,11 @@ const AddTodoComponent = {
                     >
                         <i class="fas fa-cog"></i>
                     </button>
+                </div>
+                <!-- Duplicate Warning -->
+                <div v-if="store.state.duplicateWarning" class="duplicate-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {{ store.state.duplicateWarning }}
                 </div>
             </div>
 
@@ -105,7 +112,7 @@ const AddTodoComponent = {
                 </div>
 
                 <div class="form-actions">
-                    <button @click="addAdvancedTodo" class="btn btn-primary" :disabled="!store.state.newTodoText.trim()">
+                    <button @click="addAdvancedTodo" class="btn btn-primary" :disabled="!store.state.newTodoText.trim() || store.state.loading || !!store.state.duplicateWarning">
                         <i class="fas fa-plus"></i> Add Todo
                     </button>
                     <button @click="resetForm" class="btn btn-secondary">
@@ -121,6 +128,7 @@ const AddTodoComponent = {
 
         const addQuickTodo = async () => {
             if (!store.state.newTodoText.trim()) return;
+            if (store.state.duplicateWarning) return; // Don't submit if duplicate
 
             const todoData = {
                 text: store.state.newTodoText.trim(),
@@ -137,6 +145,7 @@ const AddTodoComponent = {
 
         const addAdvancedTodo = async () => {
             if (!store.state.newTodoText.trim()) return;
+            if (store.state.duplicateWarning) return; // Don't submit if duplicate
 
             const todoData = {
                 text: store.state.newTodoText.trim(),
@@ -160,12 +169,27 @@ const AddTodoComponent = {
             store.resetNewTodo();
         };
 
+        const checkForDuplicate = () => {
+            // Always use the store method to ensure consistency
+            store.checkDuplicateWarning(store.state.newTodoText);
+        };
+
+        const handleEnterKey = () => {
+            // Only submit if button would be enabled (same logic as button)
+            if (store.state.newTodoText.trim() && !store.state.loading && !store.state.duplicateWarning) {
+                addQuickTodo();
+            }
+            // If there's a duplicate or empty text, do nothing
+        };
+
         return {
             store,
             today,
             addQuickTodo,
             addAdvancedTodo,
-            resetForm
+            resetForm,
+            checkForDuplicate,
+            handleEnterKey
         };
     }
 };
