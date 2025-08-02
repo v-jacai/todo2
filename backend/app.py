@@ -248,6 +248,36 @@ def delete_todo(todo_id):
     
     return jsonify({'message': 'Todo deleted successfully'})
 
+@app.route('/api/todos/check-duplicate', methods=['POST'])
+def check_duplicate_todo():
+    """Check if a todo with the given text already exists"""
+    try:
+        data = request.get_json()
+        if not data or 'text' not in data:
+            return jsonify({'error': 'Text is required'}), 400
+        
+        text_to_check = data['text'].strip().lower()
+        if not text_to_check:
+            return jsonify({'error': 'Text cannot be empty'}), 400
+        
+        todos = load_todos()
+        
+        # Check for exact match (case-insensitive)
+        for todo in todos:
+            if todo['text'].strip().lower() == text_to_check:
+                return jsonify({
+                    'isDuplicate': True,
+                    'message': 'A todo with this text already exists!'
+                })
+        
+        return jsonify({
+            'isDuplicate': False,
+            'message': ''
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""

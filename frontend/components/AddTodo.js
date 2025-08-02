@@ -169,9 +169,26 @@ const AddTodoComponent = {
             store.resetNewTodo();
         };
 
-        const checkForDuplicate = () => {
-            // Always use the store method to ensure consistency
-            store.checkDuplicateWarning(store.state.newTodoText);
+        // Debounce function to avoid too many API calls
+        let debounceTimer = null;
+        const checkForDuplicate = async () => {
+            const currentText = store.state.newTodoText?.trim() || '';
+            
+            // Clear previous timer
+            if (debounceTimer) {
+                clearTimeout(debounceTimer);
+            }
+            
+            // Don't check for duplicates if text is empty
+            if (!currentText) {
+                store.state.duplicateWarning = '';
+                return;
+            }
+            
+            // Set new timer
+            debounceTimer = setTimeout(async () => {
+                await store.checkDuplicateWarning(currentText);
+            }, 300); // 300ms delay
         };
 
         const handleEnterKey = () => {

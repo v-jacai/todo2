@@ -493,22 +493,47 @@ class TodoStore {
         setTimeout(() => this.state.error = '', 5000);
     }
 
-    // Check if a todo with the same text already exists
+    // Check for duplicate and set warning using API
+    async checkDuplicateWarning(text) {
+        if (!text || !text.trim()) {
+            this.state.duplicateWarning = '';
+            return;
+        }
+
+        try {
+            if (!window.apiService || typeof window.apiService.checkDuplicateTodo !== 'function') {
+                if (this.isDuplicateTodo(text)) {
+                    this.state.duplicateWarning = 'A todo with this text already exists!';
+                } else {
+                    this.state.duplicateWarning = '';
+                }
+                return;
+            }
+
+            const result = await window.apiService.checkDuplicateTodo(text.trim());
+            if (result.isDuplicate) {
+                this.state.duplicateWarning = result.message;
+            } else {
+                this.state.duplicateWarning = '';
+            }
+        } catch (error) {
+            console.error('Error checking duplicate:', error);
+            // Fallback to local check if API fails
+            if (this.isDuplicateTodo(text)) {
+                this.state.duplicateWarning = 'A todo with this text already exists!';
+            } else {
+                this.state.duplicateWarning = '';
+            }
+        }
+    }
+
+    // Legacy method - keep for fallback
     isDuplicateTodo(text) {
         if (!text || !text.trim()) return false;
         const trimmedText = text.trim().toLowerCase();
         return this.state.todos.some(todo => 
             todo.text.toLowerCase() === trimmedText
         );
-    }
-
-    // Check for duplicate and set warning
-    checkDuplicateWarning(text) {
-        if (this.isDuplicateTodo(text)) {
-            this.state.duplicateWarning = 'A todo with this text already exists!';
-        } else {
-            this.state.duplicateWarning = '';
-        }
     }
 }
 

@@ -67,6 +67,14 @@ class ApiService {
         });
     }
 
+    // Check for duplicate todo
+    async checkDuplicateTodo(text) {
+        return this.request('/todos/check-duplicate', {
+            method: 'POST',
+            body: { text }
+        });
+    }
+
     // Category endpoints
     async getCategories() {
         return this.request('/categories');
