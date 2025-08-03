@@ -4,61 +4,7 @@ const { createApp } = Vue;
 const app = createApp({
     data() {
         return {
-            loading: false,
-            error: '',
-            success: '',
-             // Core data
-            todos: [],
-            categories: [],
-            tags: [],
-            stats: null,
-            
-            // UI state
-            sidebarOpen: false,
-            viewMode: 'list', // 'list' or 'grid'
-            currentView: 'all', // 'all', 'today', 'upcoming', 'overdue'
-            
-            // Filtering and sorting
-            filter: 'all', // 'all', 'active', 'completed'
-            selectedCategory: null,
-            sortBy: 'created_at',
-            sortOrder: 'desc',
-            
-            // Pagination
-            currentPage: 1,
-            itemsPerPage: 20,
-            
-            // Todo creation
-            newTodoText: '',
-            showAdvancedForm: false,
-            newTodo: {
-                priority: 'medium',
-                category_id: '',
-                due_date: '',
-                estimated_time: '',
-                notes: ''
-            },
-            newTodoTags: '',
-            
-            // Editing
-            editingId: null,
-            editText: '',
-            
-            // Selection and bulk operations
-            selectedTodos: [],
-            
-            // Modals
-            showCategoryModal: false,
-            showStatsModal: false,
-            showDetailsModal: false,
-            selectedTodo: null,
-            
-            // New category
-            newCategory: {
-                name: '',
-                icon: '📋',
-                color: '#3498db'
-            }
+            loading: false
         }
     },
     
@@ -72,7 +18,6 @@ const app = createApp({
         async loadInitialData() {
             try {
                 this.loading = true;
-                this.error = '';
                 
                 const serverRunning = await window.apiService.checkHealth();
                 if (!serverRunning) {
@@ -98,13 +43,11 @@ const app = createApp({
         },
         
         showError(message) {
-            this.error = message;
-            setTimeout(() => this.error = '', 5000);
+            this.store.showError(message);
         },
         
         showSuccess(message) {
-            this.success = message;
-            setTimeout(() => this.success = '', 3000);
+            this.store.showSuccess(message);
         },
         
         setupPeriodicRefresh() {

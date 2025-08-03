@@ -48,15 +48,33 @@ class Utils {
 
     // Priority utilities
     static getPriorityColor(priority) {
-        return window.CONFIG?.PRIORITY_CONFIG[priority]?.color || '#6c757d';
+        const colors = {
+            'low': '#28a745',
+            'medium': '#ffc107', 
+            'high': '#fd7e14',
+            'urgent': '#dc3545'
+        };
+        return colors[priority] || '#6c757d';
     }
 
     static getPriorityIcon(priority) {
-        return window.CONFIG?.PRIORITY_CONFIG[priority]?.icon || '⚪';
+        const icons = {
+            'low': '🟢',
+            'medium': '🟡',
+            'high': '🟠', 
+            'urgent': '🔴'
+        };
+        return icons[priority] || '⚪';
     }
 
     static getPriorityOrder(priority) {
-        return window.CONFIG?.PRIORITY_CONFIG[priority]?.order || 0;
+        const orders = {
+            'low': 1,
+            'medium': 2,
+            'high': 3,
+            'urgent': 4
+        };
+        return orders[priority] || 0;
     }
 
     // Category utilities
@@ -88,27 +106,6 @@ class Utils {
         return tags.join(', ');
     }
 
-    // Validation utilities
-    static validateEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-
-    static validateUrl(url) {
-        try {
-            new URL(url);
-            return true;
-        } catch {
-            return false;
-        }
-    }
-
-    static sanitizeHtml(str) {
-        const temp = document.createElement('div');
-        temp.textContent = str;
-        return temp.innerHTML;
-    }
-
     // Debounce utility
     static debounce(func, wait) {
         let timeout;
@@ -120,20 +117,6 @@ class Utils {
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
         };
-    }
-
-    // Deep clone utility
-    static deepClone(obj) {
-        if (obj === null || typeof obj !== "object") return obj;
-        if (obj instanceof Date) return new Date(obj.getTime());
-        if (obj instanceof Array) return obj.map(item => this.deepClone(item));
-        if (typeof obj === "object") {
-            const copy = {};
-            Object.keys(obj).forEach(key => {
-                copy[key] = this.deepClone(obj[key]);
-            });
-            return copy;
-        }
     }
 }
 

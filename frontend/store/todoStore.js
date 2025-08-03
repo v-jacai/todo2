@@ -181,12 +181,6 @@ class TodoStore {
         try {
             this.state.loading = true;
             
-            // Check for duplicate todo
-            if (this.isDuplicateTodo(todoData.text)) {
-                this.showError('A todo with this text already exists!');
-                return null;
-            }
-            
             // Add tags from the tags input
             if (this.state.newTodoTags) {
                 todoData.tags = this.state.newTodoTags.split(',').map(tag => tag.trim()).filter(tag => tag);
@@ -267,16 +261,6 @@ class TodoStore {
         }
     }
 
-    // Selection and bulk operations
-    toggleTodoSelection(todoId) {
-        const index = this.state.selectedTodos.indexOf(todoId);
-        if (index > -1) {
-            this.state.selectedTodos.splice(index, 1);
-        } else {
-            this.state.selectedTodos.push(todoId);
-        }
-    }
-
     selectAllTodos() {
         this.state.selectedTodos = this.filteredTodos.map(todo => todo.id);
     }
@@ -319,6 +303,9 @@ class TodoStore {
     }
 
     async bulkDelete() {
+        if (this.state.selectedTodos.length === 0) return;
+        if (!confirm(`Are you sure you want to delete ${this.state.selectedTodos.length} todos? This action cannot be undone.`)) return;
+        
         try {
             this.state.loading = true;
             const promises = this.state.selectedTodos.map(todoId => 
@@ -416,49 +403,7 @@ class TodoStore {
     }
 
     async bulkComplete() {
-        if (this.state.selectedTodos.length === 0) return;
-        
-        try {
-            this.state.loading = true;
-            
-            for (const todoId of this.state.selectedTodos) {
-                const todo = this.state.todos.find(t => t.id === todoId);
-                if (todo && !todo.completed) {
-                    await this.updateTodo(todoId, { completed: true });
-                }
-            }
-            
-            this.state.selectedTodos = [];
-            this.showSuccess('Todos marked as completed!');
-            
-        } catch (error) {
-            console.error('Error bulk updating todos:', error);
-            this.showError('Failed to update todos. Please try again.');
-        } finally {
-            this.state.loading = false;
-        }
-    }
-
-    async bulkDelete() {
-        if (this.state.selectedTodos.length === 0) return;
-        if (!confirm(`Are you sure you want to delete ${this.state.selectedTodos.length} todos?`)) return;
-        
-        try {
-            this.state.loading = true;
-            
-            for (const todoId of this.state.selectedTodos) {
-                await this.deleteTodo(todoId);
-            }
-            
-            this.state.selectedTodos = [];
-            this.showSuccess('Todos deleted successfully!');
-            
-        } catch (error) {
-            console.error('Error deleting todos:', error);
-            this.showError('Failed to delete todos. Please try again.');
-        } finally {
-            this.state.loading = false;
-        }
+        await this.bulkMarkComplete(true);
     }
 
     // Edit functionality

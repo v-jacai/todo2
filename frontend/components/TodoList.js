@@ -138,38 +138,32 @@ const TodoListComponent = {
         };
 
         const bulkMarkComplete = async () => {
-            if (confirm(`Mark ${store.state.selectedTodos.length} todos as complete?`)) {
-                try {
-                    await store.bulkMarkComplete(true);
-                    // Force re-render by updating a reactive property
-                    await store.loadTodos();
-                } catch (error) {
-                    console.error('Error in bulk mark complete:', error);
-                }
+            try {
+                await store.bulkMarkComplete(true);
+                // Force re-render by updating a reactive property
+                await store.loadTodos();
+            } catch (error) {
+                console.error('Error in bulk mark complete:', error);
             }
         };
 
         const bulkMarkActive = async () => {
-            if (confirm(`Mark ${store.state.selectedTodos.length} todos as active?`)) {
-                try {
-                    await store.bulkMarkComplete(false);
-                    // Force re-render by updating a reactive property
-                    await store.loadTodos();
-                } catch (error) {
-                    console.error('Error in bulk mark active:', error);
-                }
+            try {
+                await store.bulkMarkComplete(false);
+                // Force re-render by updating a reactive property
+                await store.loadTodos();
+            } catch (error) {
+                console.error('Error in bulk mark active:', error);
             }
         };
 
         const bulkDelete = async () => {
-            if (confirm(`Delete ${store.state.selectedTodos.length} todos? This action cannot be undone.`)) {
-                try {
-                    await store.bulkDelete();
-                    // Force re-render by updating a reactive property
-                    await store.loadTodos();
-                } catch (error) {
-                    console.error('Error in bulk delete:', error);
-                }
+            try {
+                await store.bulkDelete();
+                // Force re-render by updating a reactive property
+                await store.loadTodos();
+            } catch (error) {
+                console.error('Error in bulk delete:', error);
             }
         };
 

@@ -92,7 +92,7 @@ const TodoItemComponent = {
         });
 
         const toggleSelection = () => {
-            store.toggleTodoSelection(props.todo.id);
+            store.toggleSelection(props.todo.id);
         };
 
         const toggleTodo = async () => {
